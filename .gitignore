@@ -1,7 +1,7 @@
 my_settings.py
 *.csv
 
-__pycach
+__pycach__/
 
 ### macOS ###
 # General
