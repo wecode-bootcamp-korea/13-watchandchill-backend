@@ -1,6 +1,7 @@
 my_settings.py
 *.csv
 
+__pycache__/
 
 ### macOS ###
 # General
