@@ -1,6 +1,9 @@
 my_settings.py
 *.csv
-
+castscriber.py
+csv_to_mysql.py
+faker_sample.py
+peoplescriber.py
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,vim,django,sublimetext,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,vim,django,sublimetext,vscode
