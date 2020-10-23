@@ -1,11 +1,9 @@
 my_settings.py
 *.csv
-<<<<<<< feature/movies_info
 castscriber.py
 csv_to_mysql.py
 faker_sample.py
 peoplescriber.py
-=======
 __pycach__/
 ### macOS ###
 # General
@@ -30,8 +28,7 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-# End of https://www.toptal.com/developers/gitignore/api/macos
->>>>>>> main
+# End of https://www.toptal.com/developers/gitignore/api/maco
 # Created by https://www.toptal.com/developers/gitignore/api/python,vim,django,sublimetext,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,vim,django,sublimetext,vscode
 ### Django ###
