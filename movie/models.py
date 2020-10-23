@@ -73,7 +73,7 @@ class MovieTags(models.Model) :
 
 
 class Services(models.Model) :
-	name 	= models.CharField(max_length=50)
+	name 		= models.CharField(max_length=50)
 	icon_url 	= models.CharField(max_length=2000, null=True)
 	class Meta:
 		db_table='services'
