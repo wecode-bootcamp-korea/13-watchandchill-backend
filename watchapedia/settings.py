@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'corsheaders',
+    #my apps
+    'movie',
 ]
 
 MIDDLEWARE = [
