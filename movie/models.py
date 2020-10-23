@@ -9,7 +9,7 @@ class Movies(models.Model):
 	in_theaters  = models.BooleanField()
 	service		 = models.ManyToManyField('Services', through='MovieServices', related_name='services')
 	genre		 = models.ManyToManyField('Genres', through='MovieGenres', related_name='genres')
-	tags		 = models.ManyToManyField('Tags', through='MovieTags', related_name='tags')
+	tag 		 = models.ManyToManyField('Tags', through='MovieTags', related_name='tags')
 	casting		 = models.ManyToManyField('People', through='Cast', related_name='people')
 
 	class Meta:
@@ -66,7 +66,7 @@ class Tags(models.Model) :
 
 
 class MovieTags(models.Model) :
-	tags		= models.ForeignKey('Tags', on_delete=models.CASCADE)
+	tag 		= models.ForeignKey('Tags', on_delete=models.CASCADE)
 	movie		= models.ForeignKey('Movies', on_delete=models.CASCADE)
 	class Meta:
 		db_table='movie_tags'
@@ -80,7 +80,7 @@ class Services(models.Model) :
 
 
 class MovieServices(models.Model) :
-	services	=models.ForeignKey('Services', on_delete=models.CASCADE)
+	service 	=models.ForeignKey('Services', on_delete=models.CASCADE)
 	movie 		=models.ForeignKey('Movies', on_delete=models.CASCADE)
 	class Meta:
 		db_table='movie_services'
