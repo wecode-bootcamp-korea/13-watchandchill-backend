@@ -10,23 +10,3 @@ class User(models.Model):
     class Meta :
         db_table = 'users'
 
-
-"""
-class UserStatus(models.Model):
-    user            = models.ForeignKey('User', on_delete=models.CASCADE)
-    movie           = models.ForeignKey('Movie', on_delete=models.CASCADE)
-    status          = models.ForeignKey('StatusType', on_delete=models.CASCADE)
-
-    class Meta :
-        db_table = 'user_status'
-
-
-class StatusType(models.Model):
-    status = models.CharField(max_length=50)
-
-    class Meta :
-        db_table = 'status_types'
-
-"""
-
-
