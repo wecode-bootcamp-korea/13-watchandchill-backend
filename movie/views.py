@@ -113,31 +113,27 @@ class PageView(View) :
 	def get(self, request, movie_id) :
 		try:
 			data 	 	= json.loads(request.body)
-			movie_info 	= Movies.objects.get(id = movie_id)
+			movie 	 	= Movies.objects.get(id = movie_id)
 			photos 		= MoviePhotos.objects.filter(id = movie_id)
 			videos 		= MovieVideos.objects.filter(id = movie_id)
 			cast_list 	= Cast.objects.filter(movie = movie_id)
-			actor_id 	= cast_list.values_list('id', flat=True)
 			actor_name 	= [People.objects.get(id =person).name for person in cast_list.values_list('name', flat=True)]
-			actor_photo	= [People.objects.get(id =person).avatar_url for person in cast_list.all().values_list('name', flat=True)]
-			role_type 	= [person.role for person in cast_list.all()]
 			cast_as 	= [person.cast_as for person in cast_list.all()]
-			cast_bank	= [{'name': name, 'role': role, 'cast_as': cast, 'photo': photo} for name, role, cast, photo in zip(actor_name, role_type, cast_as, actor_photo)]
+			cast 		= [{'name': person.name.name, 'role': person.role, 'cast_as': person.cast_as, 'photo': person.name.avatar_url} for person in Cast.objects.filter(movie = movie_id)]
 			all_info 	={
-				'id'			: movie_info.id,
-				'title'			: movie_info.title,
-				'date'			: movie_info.premier_date,
-				'poster_url'	: movie_info.poster_url,
-				'country'		: movie_info.country,
-				'service'		: list(movie_info.service.values_list('name', flat=True)),
-				'genre'			: list(movie_info.genre.values_list('name', flat=True)),
-				'photos'		: list(photos.values_list('photo_url', flat=True)),
-				'videos'		: list(videos.values_list('video_url', flat=True)),
-				'tag'			: list(movie_info.genre.values_list('name', flat=True)),
-				'runtime'		: movie_info.run_time,
-				'premier'		: movie_info.premier_date,
-				'description'	: movie_info.description,
-				'cast'			: cast_bank
+				'id'			: movie_id,
+				'title'			: movie.title,
+				'date'			: movie.premier_date,
+				'poster_url'	: movie.poster_url,
+				'country'		: movie.country,
+				'service'		: list(movie.service.values_list('name', flat=True)),
+				'genre'			: list(movie.genre.values_list('name', flat=True)),
+				'photos'		: list(MoviePhotos.objects.values_list('photo_url', flat=True)),
+				'videos'		: list(MovieVideos.objects.values_list('video_url', flat=True)),
+				'tag'			: list(movie.genre.values_list('name', flat=True)),
+				'runtime'		: movie.run_time,
+				'description'	: movie.description,
+				'cast'			: list(cast)
 			}
 			return JsonResponse ({'movie information': all_info}, status=200)
 		except Movies.DoesNotExist:
