@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.views import View
 #Custom
-from movie.models import *
+from movie.models import Movies, MoviePhotos, MovieVideos, Cast, People, Genres, MovieGenres, Tags, MovieTags, Services, MovieServices
 
 
 class ListView(View):
@@ -23,7 +23,7 @@ class ListView(View):
 			'runtime': movie.run_time,
 			'service': [service.name for service in movie.service.all()],
 			'genre'	 : list(movie.genre.values_list('name', flat= True))
-			} for movie in theater_library[0:20]]
+			} for movie in theater_library[:20]]
 
 
 #WATCHA ROW
@@ -117,12 +117,12 @@ class PageView(View) :
 			photos 		= MoviePhotos.objects.filter(id = movie_id)
 			videos 		= MovieVideos.objects.filter(id = movie_id)
 			cast_list 	= Cast.objects.filter(movie = movie_id)
-			actor_id 	= cast_list.all().values_list('id', flat=True)
-			actor_name 	= [People.objects.get(id =person).name for person in cast_list.all().values_list('name', flat=True)]
+			actor_id 	= cast_list.values_list('id', flat=True)
+			actor_name 	= [People.objects.get(id =person).name for person in cast_list.values_list('name', flat=True)]
 			actor_photo	= [People.objects.get(id =person).avatar_url for person in cast_list.all().values_list('name', flat=True)]
 			role_type 	= [person.role for person in cast_list.all()]
 			cast_as 	= [person.cast_as for person in cast_list.all()]
-			cast_bank	= [{'name': actor_name[i], 'role': role_type[i], 'cast_as': cast_as[i], 'photo': actor_photo[i]} for i in range(1,12)]
+			cast_bank	= [{'name': name, 'role': role, 'cast_as': cast, 'photo': photo} for name, role, cast, photo in zip(actor_name, role_type, cast_as, actor_photo)]
 			all_info 	={
 				'id'			: movie_info.id,
 				'title'			: movie_info.title,
@@ -136,6 +136,7 @@ class PageView(View) :
 				'tag'			: list(movie_info.genre.values_list('name', flat=True)),
 				'runtime'		: movie_info.run_time,
 				'premier'		: movie_info.premier_date,
+				'description'	: movie_info.description,
 				'cast'			: cast_bank
 			}
 			return JsonResponse ({'movie information': all_info}, status=200)

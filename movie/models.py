@@ -11,6 +11,7 @@ class Movies(models.Model):
 	genre		 = models.ManyToManyField('Genres', through='MovieGenres', related_name='genres')
 	tag 		 = models.ManyToManyField('Tags', through='MovieTags', related_name='tags')
 	casting		 = models.ManyToManyField('People', through='Cast', related_name='people')
+	description	 = models.CharField(max_length=5000)
 
 	class Meta:
 		db_table= 'movies'
