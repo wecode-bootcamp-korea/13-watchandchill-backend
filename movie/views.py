@@ -110,10 +110,9 @@ class ListView(View):
 
 
 class PageView(View) :
-	def post(self, request) :
+	def get(self, request, movie_id) :
 		try:
 			data 	 	= json.loads(request.body)
-			movie_id 	= data['id']
 			movie_info 	= Movies.objects.get(id = movie_id)
 			photos 		= MoviePhotos.objects.filter(id = movie_id)
 			videos 		= MovieVideos.objects.filter(id = movie_id)
@@ -123,7 +122,7 @@ class PageView(View) :
 			actor_photo	= [People.objects.get(id =person).avatar_url for person in cast_list.all().values_list('name', flat=True)]
 			role_type 	= [person.role for person in cast_list.all()]
 			cast_as 	= [person.cast_as for person in cast_list.all()]
-			cast_bank	= [{'name': actor_name[i], 'role': role_type[i], 'cast_as': cast_as[i], 'photo': actor_photo[i]} for i in range(1,len(actor_name))]
+			cast_bank	= [{'name': actor_name[i], 'role': role_type[i], 'cast_as': cast_as[i], 'photo': actor_photo[i]} for i in range(1,12)]
 			all_info 	={
 				'id'			: movie_info.id,
 				'title'			: movie_info.title,
@@ -140,5 +139,5 @@ class PageView(View) :
 				'cast'			: cast_bank
 			}
 			return JsonResponse ({'movie information': all_info}, status=200)
-		except KeyError: 
-			return JsonResponse ({'KeyError' : 'Movie non-existant'}, status=400)
+		except Movies.DoesNotExist:
+			return JsonResponse ({'KeyError': 'Non-existant movie id'})
