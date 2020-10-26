@@ -10,104 +10,53 @@ from movie.models import Movies, MoviePhotos, MovieVideos, Cast, People, Genres,
 
 class ListView(View):
 	def get(self, request) :
+		def info_lister(filtered_list):
+			info = [{
+			'id' 	 : movie.id,
+			'title'  : movie.title,
+			'date'	 : movie.premier_date,
+			'country': movie.country,
+			'poster' : movie.poster_url,
+			'runtime': movie.run_time,
+			'service': list(movie.service.values_list('name',flat= True)),
+			'genre'	 : list(movie.genre.values_list('name', flat= True))
+			} for movie in filtered_list[:20]]
+			return info
 		library = Movies.objects.all()
-
 #IN THEATERS
-		theater_library	= library.filter(in_theaters = '1')
-		theater_movies	= [{
-			'id' 	 : movie.id,
-			'title'  : movie.title,
-			'date'	 : movie.premier_date,
-			'country': movie.country,
-			'poster' : movie.poster_url,
-			'runtime': movie.run_time,
-			'service': [service.name for service in movie.service.all()],
-			'genre'	 : list(movie.genre.values_list('name', flat= True))
-			} for movie in theater_library[:20]]
-
-
-#WATCHA ROW
-		watcha_library	= library.filter(service = '2')
-		watcha_movies	= [{
-			'id' 	 : movie.id,
-			'title'  : movie.title,
-			'date'	 : movie.premier_date,
-			'country': movie.country,
-			'poster' : movie.poster_url,
-			'runtime': movie.run_time,
-			'service': [service.name for service in movie.service.all()],
-			'genre'	 : list(movie.genre.values_list('name', flat= True))
-			} for movie in watcha_library[0:20]]
+		library_listed 	= [titles for titles in library]
+		filtered 	   	= [title for title in library if title.in_theaters== True]
+		theater_movies 	= info_lister(filtered)
+# WATCHA ROW
+		filtered 	  	= library.filter(service = '2')
+		watcha_movies 	= info_lister(filtered)
 # NETFLIX ROW
-		netflix_library	= library.filter(service = '1')
-		netflix_movies	= [{
-			'id' 	 : movie.id,
-			'title'  : movie.title,
-			'date'	 : movie.premier_date,
-			'country': movie.country,
-			'poster' : movie.poster_url,
-			'runtime': movie.run_time,
-			'service': [service.name for service in movie.service.all()],
-			'genre'	 : list(movie.genre.values_list('name', flat= True))
-			} for movie in netflix_library[0:20]]
+		filtered		= library.filter(service = '1')
+		netlfix_movies  = info_lister(filtered)
 # KOREA-BEST ROW
-		korean_library	= library.filter(country = '한국')
-		korean_movies	= [{
- 			'id' 	 : movie.id,
-			'title'  : movie.title,
-			'date'	 : movie.premier_date,
-			'country': movie.country,
-			'poster' : movie.poster_url,
-			'runtime': movie.run_time,
-			'service': [service.name for service in movie.service.all()],
-			'genre'	 : list(movie.genre.values_list('name', flat= True))
-			} for movie in korean_library[0:20]]
-# US-BEST ROW
-		us_library		= library.filter(country = '미국')
-		us_movies		= [{
- 			'id' 	 : movie.id,
-			'title'  : movie.title,
-			'date'	 : movie.premier_date,
-			'country': movie.country,
-			'poster' : movie.poster_url,
-			'runtime': movie.run_time,
-			'service': [service.name for service in movie.service.all()],
-			'genre'	 : list(movie.genre.values_list('name', flat= True))
-			} for movie in us_library[0:20]]
-# ACTION ROW
-		action_library	= library.filter(genre = '2')
-		action_movies 	= [{
- 			'id' 	 : movie.id,
-			'title'  : movie.title,
-			'date'	 : movie.premier_date,
-			'country': movie.country,
-			'poster' : movie.poster_url,
-			'runtime': movie.run_time,
-			'service': [service.name for service in movie.service.all()],
-			'genre'	 : list(movie.genre.values_list('name', flat= True))
-			} for movie in action_library[0:20]]
-# COMEDY ROW
-		comedy_library 	= library.filter(genre = '12')
-		comedy_movies 	= [{
- 			'id' 	 : movie.id,
-			'title'  : movie.title,
-			'date'	 : movie.premier_date,
-			'country': movie.country,
-			'poster' : movie.poster_url,
-			'runtime': movie.run_time,
-			'service': [service.name for service in movie.service.all()],
-			'genre'	 : list(movie.genre.values_list('name', flat= True))
-			} for movie in comedy_library[0:20]]
+		library_listed 	= [titles for titles in library]
+		filtered 	   	= [title for title in library if title.country == '한국']
+		korean_movies 	= info_lister(filtered)
+# # US-BEST ROW
+		library_listed 	= [titles for titles in library]
+		filtered 	   	= [title for title in library if title.country == '미국']
+		us_movies 		= info_lister(filtered)
+# # ACTION ROW
+		filtered	= library.filter(genre = '2')
+		action_movies 	= info_lister(filtered)
+# # COMEDY ROW
+		filtered 	= library.filter(genre = '12')
+		comedy_movies 	= info_lister(filtered)
+
 		return JsonResponse ({
 							'theater'	: theater_movies,
 							'watcha' 	: watcha_movies,
-							'netflix'	: netflix_movies, 
+							'netflix'	: netlfix_movies, 
 							'kr'		: korean_movies,
 							'us'		: us_movies,
 							'action'	: action_movies,
 							'comedy'	: comedy_movies,
 							}, status=200)
-
 
 class PageView(View) :
 	def get(self, request, movie_id) :
