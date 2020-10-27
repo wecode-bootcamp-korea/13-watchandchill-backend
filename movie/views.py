@@ -51,19 +51,19 @@ class FrontView(View):
 							'comedy'	: info_lister(comedy_filtered),
 							}, status=200)
 
-# class MoviesView(View):
-# 	def get(self, request) :
-# 		def info_lister(filtered_list):
-# 			info = [{
-# 			'id' 	 : movie.id,
-# 			'title'  : movie.title,
-# 			'date'	 : movie.premier_date,
-# 			'country': movie.country,
-# 			'poster' : movie.poster_url,
-# 			'runtime': movie.run_time,
-# 			'service': list(movie.service.values_list('name',flat= True)),
-# 			'genre'	 : list(movie.genre.values_list('name', flat= True))
-# 			} for movie in filtered_list[:20]]
+class MoviesView(View):
+	def get(self, request) :
+		info = [{
+		'id' 	 : movie.id,
+		'title'  : movie.title,
+		'date'	 : movie.premier_date,
+		'country': movie.country,
+		'poster' : movie.poster_url,
+		'runtime': movie.run_time,
+		'service': list(movie.service.values_list('name',flat= True)),
+		'genre'	 : list(movie.genre.values_list('name', flat= True))
+					} for movie in Movies.objects.all()]
+		return JsonResponse ({'movielist' : info }, status=200)
 
 
 class MovieView(View) :
