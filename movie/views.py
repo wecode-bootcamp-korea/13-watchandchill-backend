@@ -27,24 +27,24 @@ class ListView(View):
 		library_listed 	= [titles for titles in library]
 		filtered 	   	= [title for title in library if title.in_theaters== True]
 		theater_movies 	= info_lister(filtered)
-# WATCHA ROW
+#WATCHA ROW
 		filtered 	  	= library.filter(service = '2')
 		watcha_movies 	= info_lister(filtered)
-# NETFLIX ROW
+#NETFLIX ROW
 		filtered		= library.filter(service = '1')
 		netlfix_movies  = info_lister(filtered)
-# KOREA-BEST ROW
+#KOREA-BEST ROW
 		library_listed 	= [titles for titles in library]
 		filtered 	   	= [title for title in library if title.country == '한국']
 		korean_movies 	= info_lister(filtered)
-# # US-BEST ROW
+#US-BEST ROW
 		library_listed 	= [titles for titles in library]
 		filtered 	   	= [title for title in library if title.country == '미국']
 		us_movies 		= info_lister(filtered)
-# # ACTION ROW
+#ACTION ROW
 		filtered	= library.filter(genre = '2')
 		action_movies 	= info_lister(filtered)
-# # COMEDY ROW
+#COMEDY ROW
 		filtered 	= library.filter(genre = '12')
 		comedy_movies 	= info_lister(filtered)
 
@@ -87,3 +87,5 @@ class PageView(View) :
 			return JsonResponse ({'movie information': all_info}, status=200)
 		except Movies.DoesNotExist:
 			return JsonResponse ({'KeyError': 'Non-existant movie id'})
+
+
