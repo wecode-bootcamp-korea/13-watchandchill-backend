@@ -2,7 +2,7 @@ from django.db import models
 
 class Movies(models.Model):
 	title		 = models.CharField(max_length=100)
-	premier_date = models.CharField(max_length=100)
+	premier_date = models.DateField(max_length=100)
 	country		 = models.CharField(max_length=100)
 	run_time	 = models.CharField(max_length=10)
 	poster_url	 = models.URLField(max_length=200)
@@ -12,6 +12,7 @@ class Movies(models.Model):
 	tag 		 = models.ManyToManyField('Tags', through='MovieTags', related_name='tags')
 	casting		 = models.ManyToManyField('People', through='Cast', related_name='people')
 	description	 = models.CharField(max_length=5000)
+	coverpic_url = models.URLField(max_length=200)
 
 	class Meta:
 		db_table= 'movies'

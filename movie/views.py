@@ -8,7 +8,7 @@ from django.views import View
 from movie.models import Movies, MoviePhotos, MovieVideos, Cast, People, Genres, MovieGenres, Tags, MovieTags, Services, MovieServices
 
 
-class ListView(View):
+class FrontView(View):
 	def get(self, request) :
 		def info_lister(filtered_list):
 			info = [{
@@ -24,68 +24,97 @@ class ListView(View):
 			return info
 		library = Movies.objects.all()
 #IN THEATERS
-		library_listed 	= [titles for titles in library]
-		filtered 	   	= [title for title in library if title.in_theaters== True]
-		theater_movies 	= info_lister(filtered)
+		library_listed 		= [titles for titles in library]
+		theater_filtered 	= [title for title in library if title.in_theaters== 1]
 #WATCHA ROW
-		filtered 	  	= library.filter(service = '2')
-		watcha_movies 	= info_lister(filtered)
+		watcha_filtered 	= library.filter(service = '2')
 #NETFLIX ROW
-		filtered		= library.filter(service = '1')
-		netlfix_movies  = info_lister(filtered)
+		netflix_filtered	= library.filter(service = '1')
 #KOREA-BEST ROW
-		library_listed 	= [titles for titles in library]
-		filtered 	   	= [title for title in library if title.country == '한국']
-		korean_movies 	= info_lister(filtered)
+		library_listed 		= [titles for titles in library]
+		korea_filtered 		= [title for title in library if title.country == '한국']
 #US-BEST ROW
-		library_listed 	= [titles for titles in library]
-		filtered 	   	= [title for title in library if title.country == '미국']
-		us_movies 		= info_lister(filtered)
+		library_listed 		= [titles for titles in library]
+		us_filtered 	   	= [title for title in library if title.country == '미국']
 #ACTION ROW
-		filtered	= library.filter(genre = '2')
-		action_movies 	= info_lister(filtered)
+		action_filtered	= library.filter(genre = '2')
 #COMEDY ROW
-		filtered 	= library.filter(genre = '12')
-		comedy_movies 	= info_lister(filtered)
+		comedy_filtered 	= library.filter(genre = '12')
 
 		return JsonResponse ({
-							'theater'	: theater_movies,
-							'watcha' 	: watcha_movies,
-							'netflix'	: netlfix_movies, 
-							'kr'		: korean_movies,
-							'us'		: us_movies,
-							'action'	: action_movies,
-							'comedy'	: comedy_movies,
+							'theater'	: info_lister(theater_filtered),
+							'watcha' 	: info_lister(watcha_filtered),
+							'netflix'	: info_lister(netflix_filtered), 
+							'kr'		: info_lister(korea_filtered),
+							'us'		: info_lister(us_filtered),
+							'action'	: info_lister(action_filtered),
+							'comedy'	: info_lister(comedy_filtered),
 							}, status=200)
 
-class PageView(View) :
+# class MoviesView(View):
+# 	def get(self, request) :
+# 		def info_lister(filtered_list):
+# 			info = [{
+# 			'id' 	 : movie.id,
+# 			'title'  : movie.title,
+# 			'date'	 : movie.premier_date,
+# 			'country': movie.country,
+# 			'poster' : movie.poster_url,
+# 			'runtime': movie.run_time,
+# 			'service': list(movie.service.values_list('name',flat= True)),
+# 			'genre'	 : list(movie.genre.values_list('name', flat= True))
+# 			} for movie in filtered_list[:20]]
+
+
+class MovieView(View) :
 	def get(self, request, movie_id) :
 		try:
 			data 	 	= json.loads(request.body)
 			movie 	 	= Movies.objects.get(id = movie_id)
-			photos 		= MoviePhotos.objects.filter(id = movie_id)
-			videos 		= MovieVideos.objects.filter(id = movie_id)
-			cast_list 	= Cast.objects.filter(movie = movie_id)
-			actor_name 	= [People.objects.get(id =person).name for person in cast_list.values_list('name', flat=True)]
-			cast_as 	= [person.cast_as for person in cast_list.all()]
-			cast 		= [{'name': person.name.name, 'role': person.role, 'cast_as': person.cast_as, 'photo': person.name.avatar_url} for person in Cast.objects.filter(movie = movie_id)]
 			all_info 	={
-				'id'			: movie_id,
+				'id'			: movie.id,
 				'title'			: movie.title,
 				'date'			: movie.premier_date,
 				'poster_url'	: movie.poster_url,
 				'country'		: movie.country,
-				'service'		: list(movie.service.values_list('name', flat=True)),
+				'service'		: list(movie.service.values()),
 				'genre'			: list(movie.genre.values_list('name', flat=True)),
-				'photos'		: list(MoviePhotos.objects.values_list('photo_url', flat=True)),
-				'videos'		: list(MovieVideos.objects.values_list('video_url', flat=True)),
+				'photos'		: [photos.photo_url for photos in movie.moviephotos_set.all()],
+				'videos'		: [videos.video_url for videos in movie.movievideos_set.all()],
 				'tag'			: list(movie.genre.values_list('name', flat=True)),
 				'runtime'		: movie.run_time,
+				'coverpic_url'	: movie.coverpic_url,
 				'description'	: movie.description,
-				'cast'			: list(cast)
+				'cast'			: [{
+									'name': person.name, 
+									'role': Cast.objects.filter(movie = movie , name = person)[0].role, 
+									'cast_as': Cast.objects.filter(movie = movie , name = person)[0].cast_as, 
+									'photo': person.avatar_url
+									} 
+				for person in movie.casting.all()]
+		
 			}
-			return JsonResponse ({'movie information': all_info}, status=200)
+			return JsonResponse ({'movie_information': all_info}, status=200)
 		except Movies.DoesNotExist:
-			return JsonResponse ({'KeyError': 'Non-existant movie id'})
+			return JsonResponse ({'KeyError': 'Non-existant movie id'}, status = 404)
 
-
+class ActorView(View) :
+	def get(self, request, person_id) :
+		try:
+			person 		= People.objects.get(id = person_id)
+			movie_list 	= [{
+				'movie_id'	: cast.movie.id,
+				'title'		: cast.movie.title,
+				'poster_url': cast.movie.poster_url,
+				'services'	: [{'name': info.name, 'logo': info.icon_url} for info in cast.movie.service.all()]
+				} for cast in Cast.objects.filter(name = person)
+			]
+			person_info = {
+				'id'		: person.id,
+				'name'		: person.name,
+				'pic_url' 	: person.avatar_url,
+				'movie_list': list(movie_list)
+			}
+			return JsonResponse({'filmography': person_info}, status=200)
+		except People.DoesNotExist:
+			return JsonResponse ({'KeyError': 'Non-existant person'}, status=404)
