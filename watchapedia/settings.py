@@ -40,8 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'movie',
-    'user',
-    'review',
+    'user'
 ]
 
 MIDDLEWARE = [
@@ -178,4 +177,3 @@ CORS_ALLOW_HEADERS = (
 #         },
 #     },
 # }
-

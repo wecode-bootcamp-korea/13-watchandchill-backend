@@ -1,8 +1,3 @@
-import json
-import re
-import bcrypt
-import jwt
-
 from django.http import JsonResponse
 from django.views import View
 from user.models import User
@@ -63,5 +58,3 @@ class LoginView(View):
 #     def post(self,request, movie_id, status_id):
 #         data    = json.loads(request.body)
 #         user_id = request.user.id
-
-
