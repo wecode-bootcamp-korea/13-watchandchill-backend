@@ -23,7 +23,7 @@ class ReviewView(View):
         limit       = int(request.GET.get("limit", "20"))
 
         if not MovieGenres.objects.filter(genres_id = genre).exists() :
-            user_rating     = StarRating.objects.filter(user = user_id)
+            user_rating     = StarRating.objects.filter(user_id = user_id)
             rating_movies   = [movie.movie.id for movie in user_rating]
             movie_list      = Movies.objects.all().exclude(id__in = rating_movies)
 
@@ -37,21 +37,30 @@ class ReviewView(View):
 
             count = StarRating.objects.filter(user=user_id).count()
 
-            return JsonResponse({"MOVIES_RANDOM" : movies,"COUNT" : count},status = 200) 
+            return JsonResponse({"MOVIES" : movies, "COUNT" : count},status = 200) 
 
         else :
             category = MovieGenres.objects.filter(genres_id = genre)
-            category_movies = [movie.movie.id for movie in category]
-            star_movie = StarRating.objects.filter(user = user_id, movie__in = category_movies)
-            s_movie_list = [movie.movie.id for movie in star_movie]
-            real_movies = Movies.objects.all().exclude(id__in = s_movie_list)
+            category_movies = [movie.movie for movie in category]
+
+            hello_list = []
+            for rating in StarRating.objects.filter(user_id = user_id):
+                hello_list.append(rating.movie)
+
+            new_list = []
+            for movie in category_movies:
+                if movie not in hello_list:
+                    new_list.append(movie)
+
             movies = [{ 'id' : movie.id,
                        'title' : movie.title,
                        'poster' : movie.poster_url,
                        'date' : movie.premier_date,
-                       'country' : movie.country} for movie in real_movies][offset:offset+limit]
+                       'country' : movie.country} for movie in new_list][offset:offset+limit]
 
-            return JsonResponse({"MOVIES" : movies}, status = 200)
+            print(movies)
+
+            return JsonResponse({"MOVIES" : movies, "COUNT" : count}, status = 200)
 
 
             """
@@ -79,11 +88,12 @@ class ReviewView(View):
 class StarRatingView(View):
     @login_decorator
     def post(self, request):
+        data = json.loads(request.body)
+
         try:
-            data = json.loads(request.body)
             user_id = request.user.id
             movie_id = data["movie_id"]
-            star_rating   = data["star_rating"]
+            star_rating = data["star_rating"]
 
             if not StarRating.objects.filter(user_id=user_id, movie_id=movie_id).exists():
                 StarRating.objects.create(

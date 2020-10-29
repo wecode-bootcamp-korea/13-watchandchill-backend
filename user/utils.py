@@ -24,7 +24,7 @@ def login_decorator(func):
             user = User.objects.get(id = data["id"])
             request.user = user
             request.encode_token = encode_token
-        except jwt.DecodeError :
+        except jwt.exceptions.DecodeError :
             return JsonResponse({'ERROR_CODE' : 'INVALID_TOKEN'}, status = 401)
 
         except User.DoesNotExist :
