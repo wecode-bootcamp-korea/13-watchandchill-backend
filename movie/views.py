@@ -58,7 +58,7 @@ class RelatedMovieView(View):
 							for movie in related_objects]
 		return JsonResponse ({'relate_movies': info }, status=200)
 class MovieView(View) :
-	@login_decorator
+
 	def get(self, request, movie_id) :
 		try:
 			movie 	 	= Movies.objects.get(id = movie_id)
@@ -99,6 +99,8 @@ class MovieView(View) :
 			return JsonResponse ({'movie_information': all_info}, status=200)
 		except Movies.DoesNotExist:
 			return JsonResponse ({'KeyError': 'Non-existant movie id'}, status = 404)
+
+
 class ActorView(View) :
 	def get(self, request, person_id) :
 		try:
