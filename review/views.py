@@ -57,8 +57,8 @@ class ReviewView(View):
                        'poster' : movie.poster_url,
                        'date' : movie.premier_date,
                        'country' : movie.country} for movie in new_list][offset:offset+limit]
+            count = StarRating.objects.filter(user=user_id).count()
 
-            print(movies)
 
             return JsonResponse({"MOVIES" : movies, "COUNT" : count}, status = 200)
 
@@ -100,8 +100,8 @@ class StarRatingView(View):
                     user_id  = user_id,
                     movie_id = movie_id,
                     star_rating = star_rating
-                    )
-                count = StarRating.objects.filter(user=user_id).count()
+                )
+                count = StarRating.objects.filter(user_id=user_id).count()
                 return JsonResponse({'MESSAGE':'POST_SUCCESS','COUNT' : count}, status=201)
             return JsonResponse({'MESSAGE':'star rating is exists'}, status=400)
         except KeyError:
@@ -137,7 +137,7 @@ class StarRatingView(View):
 
             if rating.exists() and rating.get().star_rating == star_rating :
                 rating.delete()
-                count = StarRating.objects.filter(user=user_id).count()
+                count = StarRating.objects.filter(user_id=user_id).count()
                 return JsonResponse({'MESSAGE':'DELETE_SUCCESS','COUNT' : count}, status=200)
             return JsonResponse({'MESSAGE':'star rating is not exists'}, status=400)
         except KeyError:
