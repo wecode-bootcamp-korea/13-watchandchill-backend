@@ -53,8 +53,9 @@ class LoginView(View):
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
 
-# class StatusSelectorView(View):
-#     @login_decorator
-#     def post(self,request, movie_id, status_id):
-#         data    = json.loads(request.body)
-#         user_id = request.user.id
+class StatusSelectorView(View):
+
+    @login_decorator
+    def post(self,request, movie_id, status_id):
+        data    = json.loads(request.body)
+        user_id = request.user.id
