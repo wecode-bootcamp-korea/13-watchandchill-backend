@@ -2,15 +2,17 @@ from django.db import models
 
 class Movies(models.Model):
 	title		 = models.CharField(max_length=100)
-	premier_date = models.CharField(max_length=100)
+	premier_date = models.DateField(max_length=100)
 	country		 = models.CharField(max_length=100)
 	run_time	 = models.CharField(max_length=10)
-	poster_url	 = models.URLField(max_length=200)
+	poster_url	 = models.URLField(max_length=1000)
 	in_theaters  = models.BooleanField()
 	service		 = models.ManyToManyField('Services', through='MovieServices', related_name='services')
 	genre		 = models.ManyToManyField('Genres', through='MovieGenres', related_name='genres')
 	tag 		 = models.ManyToManyField('Tags', through='MovieTags', related_name='tags')
 	casting		 = models.ManyToManyField('People', through='Cast', related_name='people')
+	description	 = models.CharField(max_length=1000)
+	coverpic_url = models.URLField(max_length=200)
 
 	class Meta:
 		db_table= 'movies'
