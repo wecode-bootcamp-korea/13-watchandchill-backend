@@ -1,10 +1,21 @@
+<<<<<<< HEAD
+=======
+import json
+import re
+import bcrypt
+import jwt
+
+>>>>>>> main
 from django.http import JsonResponse
 from django.views import View
 from user.models import User
 from my_settings import SECRET_KEY,ALGORITHM
+<<<<<<< HEAD
 from user.utils import login_decorator
 from movie.models import *
 from collections import Counter
+=======
+>>>>>>> main
 
 
 class SignUpView(View):
@@ -30,6 +41,7 @@ class SignUpView(View):
                         name        = data['name'], 
                         email       = data['email'],
                         password    = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode())
+
                     return JsonResponse({'MESSAGE' : 'SUCCESS'}, status = 200)
 
         except KeyError:
@@ -43,7 +55,9 @@ class LoginView(View):
 
         try :
             if User.objects.filter(email=data['email']).exists():
-                db_email = User.objects.get(email=data['email'])
+
+                db_email= User.objects.get(email=data['email'])
+
                 if bcrypt.checkpw(data['password'].encode('utf-8'),db_email.password.encode('utf-8')) == True:
                     return JsonResponse({'MESSAGE' : 'SUCCESS', 'AUTHORIZATION' : jwt.encode({'id' : db_email.id}, SECRET_KEY, ALGORITHM).decode()}, status=200)
                 else : 
@@ -53,6 +67,7 @@ class LoginView(View):
 
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
+
 
 class StatusSelectorView(View):
 
@@ -92,6 +107,7 @@ class PreferenceView(View):
     @login_decorator
 
     def get(self, request):
+        print('1')
         user_id         = request.user.id
         allreviewcount  = Review.objects.filter(user = user_id).count
         userfiltered    = Review.objects.filter(user = user_id)
