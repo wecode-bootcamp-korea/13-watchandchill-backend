@@ -6,7 +6,9 @@ import jwt
 from django.http import JsonResponse
 from django.views import View
 from user.models import User
+from review.models import StarRating
 from my_settings import SECRET_KEY,ALGORITHM
+from user.utils import login_decorator
 
 
 class SignUpView(View):
@@ -55,3 +57,15 @@ class LoginView(View):
 
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
+
+
+class ProfileView(View):
+    @login_decorator
+    def get(self,request):
+        #data = json.loads(request.body)
+        user_id = request.user.id
+
+        user_name = User.objects.get(pk = user_id).name
+        user_rating = StarRating.objects.filter(user_id = user_id).count()
+
+        return JsonResponse({'NAME' : user_name, 'COUNT' : user_rating}, status = 200) 
