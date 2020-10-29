@@ -110,8 +110,4 @@ class ActorView(View) :
 			}
 			return JsonResponse({'filmography': person_info}, status=200)
 		except People.DoesNotExist:
-<<<<<<< HEAD
 			return JsonResponse ({'KeyError': 'Non-existant person'}, status=404)
-=======
-			return JsonResponse ({'KeyError': 'Non-existant person'}, status=404)
->>>>>>> main
