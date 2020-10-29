@@ -62,9 +62,17 @@ class RelatedMovieView(View):
 		return JsonResponse ({'relate_movies': info }, status=200)
 
 class MovieView(View) :
+	@login_decorator
 	def get(self, request, movie_id) :
 		try:
 			movie 	 	= Movies.objects.get(id = movie_id)
+			# if user_id 	= request.user.id:
+				# user_id 	= request.user.id
+				# loginstar	= Review.objects.get(user = user_id, movie= movie_id).rating
+				# loginstatus = UserStatus.objects.get(user = user_id, movie = movie_id).status
+			# if not user_id :
+			# 	loginstar 	= 0
+			# 	loginstatus = 'none' 
 			all_info 	={
 				'id'			: movie.id,
 				'title'			: movie.title,
@@ -79,6 +87,8 @@ class MovieView(View) :
 				'runtime'		: movie.run_time,
 				'coverpic_url'	: movie.coverpic_url,
 				'description'	: movie.description,
+				# 'star_review'	: loginstar,
+				# 'status'		: loginstatus,
 				'star_review'	: '4',
 				'status'		: '보고싶어요',
 				'cast'			: [{
