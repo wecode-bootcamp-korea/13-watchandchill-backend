@@ -64,7 +64,6 @@ class RelatedMovieView(View):
 class MovieView(View) :
 	def get(self, request, movie_id) :
 		try:
-			data 	 	= json.loads(request.body)
 			movie 	 	= Movies.objects.get(id = movie_id)
 			all_info 	={
 				'id'			: movie.id,
@@ -85,10 +84,9 @@ class MovieView(View) :
 									'role': Cast.objects.filter(movie = movie , name = person)[0].role, 
 									'cast_as': Cast.objects.filter(movie = movie , name = person)[0].cast_as, 
 									'photo': person.avatar_url
-									} 
-				for person in movie.casting.all()]
-		
+									} for person in movie.casting.all()]
 			}
+
 			return JsonResponse ({'movie_information': all_info}, status=200)
 		except Movies.DoesNotExist:
 			return JsonResponse ({'KeyError': 'Non-existant movie id'}, status = 404)
@@ -112,4 +110,8 @@ class ActorView(View) :
 			}
 			return JsonResponse({'filmography': person_info}, status=200)
 		except People.DoesNotExist:
+<<<<<<< HEAD
 			return JsonResponse ({'KeyError': 'Non-existant person'}, status=404)
+=======
+			return JsonResponse ({'KeyError': 'Non-existant person'}, status=404)
+>>>>>>> main
