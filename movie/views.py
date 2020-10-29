@@ -6,6 +6,8 @@ from django.http import JsonResponse
 from django.views import View
 #Custom
 from movie.models import Movies, MoviePhotos, MovieVideos, Cast, People, Genres, MovieGenres, Tags, MovieTags, Services, MovieServices
+from user.utils import login_decorator
+
 class FrontView(View):
 	def get(self, request) :
 		def info_lister(filtered_list):

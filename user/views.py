@@ -1,21 +1,18 @@
-<<<<<<< HEAD
-=======
 import json
 import re
 import bcrypt
 import jwt
 
->>>>>>> main
+
 from django.http import JsonResponse
 from django.views import View
 from user.models import User
 from my_settings import SECRET_KEY,ALGORITHM
-<<<<<<< HEAD
+
 from user.utils import login_decorator
 from movie.models import *
 from collections import Counter
-=======
->>>>>>> main
+
 
 
 class SignUpView(View):
@@ -111,9 +108,6 @@ class PreferenceView(View):
         user_id         = request.user.id
         allreviewcount  = Review.objects.filter(user = user_id).count
         userfiltered    = Review.objects.filter(user = user_id)
-
-        {dic.get(star_rating.movie.country, 1)+=1 for star_rating in StarRating.objects.filter(user_id=user_id) 
-         }
 
         country_count = dict(Counter([star_rating.movie.country for star_rating in StarRating.objects.filter(user_id = user_id)]))
 
