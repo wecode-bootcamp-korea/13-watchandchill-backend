@@ -79,6 +79,8 @@ class MovieView(View) :
 				'runtime'		: movie.run_time,
 				'coverpic_url'	: movie.coverpic_url,
 				'description'	: movie.description,
+				'star_review'	: '4',
+				'status'		: '보고싶어요',
 				'cast'			: [{
 									'name': person.name, 
 									'role': Cast.objects.filter(movie = movie , name = person)[0].role, 

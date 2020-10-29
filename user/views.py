@@ -56,6 +56,41 @@ class LoginView(View):
 class StatusSelectorView(View):
 
     @login_decorator
-    def post(self,request, movie_id, status_id):
-        data    = json.loads(request.body)
-        user_id = request.user.id
+
+    def post(self, request):
+        print('1')
+        try: 
+            data    = json.loads(request.body)
+            user_id = request.user.id
+            movie_id= data['movie_id']
+            status  = data['status']
+
+
+            if not UserStatus.objects.filter(user = user_id, movie = movie_id).exists():
+                UserStatus.objects.create(user = user_id, movie = movie_id, status = status)
+
+                return JsonResponse ({'Success': 'Status created'}, status = 200)
+
+            if UserStatus.objects.filter(user = user_id, movie = movie_id, status = status_id).exists():
+                UserStatus.objects.delete(user = user_id, movie = movie_id, status = status_id)
+
+                return JsonResponse ({'Success': 'Status deleted'}, status = 200)
+
+            if UserStatus.objects.filter(user = user_id, status = status).exists():
+                new_status = UserStatus.objects.get(user = user_id, status = status).status
+                new_status.status = status
+                new_status.save()
+
+                return JsonResponse ({'Success': 'Status created'}, status = 200)
+
+        except KeyError:
+
+            return JsonResponse ({'Failure': 'Check auth'}, status = 400)
+
+class CountryRankView(View):
+    def get(self, request):
+        print('1')
+
+class GenreRankView(View):
+    def get(self, request):
+        print('1')
