@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'movie',
     'user',
-    'review',
 ]
 
 MIDDLEWARE = [
