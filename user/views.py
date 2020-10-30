@@ -2,7 +2,7 @@ import json
 import re
 import bcrypt
 import jwt
-
+import itertools
 
 from django.http import JsonResponse
 from django.views import View
@@ -10,8 +10,10 @@ from user.models import User
 from my_settings import SECRET_KEY,ALGORITHM
 
 from user.utils import login_decorator
-from movie.models import *
+from movie.models import Movies, MoviePhotos, MovieVideos, Cast, People, Genres, MovieGenres, Tags, MovieTags, Services, MovieServices
 from collections import Counter
+from review.models import StarRating, Comment, CommentLike
+
 
 
 
@@ -104,17 +106,25 @@ class PreferenceView(View):
     @login_decorator
 
     def get(self, request):
-        print('1')
         user_id         = request.user.id
-        allreviewcount  = Review.objects.filter(user = user_id).count
-        userfiltered    = Review.objects.filter(user = user_id)
+        name            = User.objects.get(id= user_id).name
+        allreviewcount  = StarRating.objects.filter(user = user_id).count()
 
         country_count = dict(Counter([star_rating.movie.country for star_rating in StarRating.objects.filter(user_id = user_id)]))
+        sorted_country = sorted(country_count.items(), key=lambda x: x[1], reverse=True)
 
-        dic = {}
+        # dic = {}
 
-        for star_rating in StarRating.objects.filter(user_id =  user_id):
-            if not star_rating.movie.country in dic: 
-                dic[star_rating.movie.country] = 1 
-            else:
-                dic[star_rating.movie.country] += 1
+        # for star_rating in StarRating.objects.filter(user_id =  user_id):
+        #     if not star_rating.movie.country in dic: 
+        #         dic[star_rating.movie.country] = 1 
+        #     else:
+        #         dic[star_rating.movie.country] += 1
+
+        a = [genreobject.movie.genre.values_list('name', flat= True) for genreobject in StarRating.objects.filter(user_id = user_id)]
+        genre_count = dict(Counter(list(itertools.chain.from_iterable(a))))
+        sorted_genre = sorted(genre_count.items(), key=lambda x: x[1], reverse=True)
+
+        return JsonResponse ({'name': name , 'all_review_count': allreviewcount, 'country_rank': sorted_country, 'genre_rank': sorted_genre}, status=200)
+
+
