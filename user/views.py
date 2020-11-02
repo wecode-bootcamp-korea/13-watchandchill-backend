@@ -113,18 +113,22 @@ class PreferenceView(View):
         country_count = dict(Counter([star_rating.movie.country for star_rating in StarRating.objects.filter(user_id = user_id)]))
         sorted_country = sorted(country_count.items(), key=lambda x: x[1], reverse=True)
 
-        # dic = {}
-
-        # for star_rating in StarRating.objects.filter(user_id =  user_id):
-        #     if not star_rating.movie.country in dic: 
-        #         dic[star_rating.movie.country] = 1 
-        #     else:
-        #         dic[star_rating.movie.country] += 1
-
-        a = [genreobject.movie.genre.values_list('name', flat= True) for genreobject in StarRating.objects.filter(user_id = user_id)]
-        genre_count = dict(Counter(list(itertools.chain.from_iterable(a))))
+        genre = [genreobject.movie.genre.values_list('name', flat= True) for genreobject in StarRating.objects.filter(user_id = user_id)]
+        genre_count = dict(Counter(list(itertools.chain.from_iterable(genre))))
         sorted_genre = sorted(genre_count.items(), key=lambda x: x[1], reverse=True)
 
         return JsonResponse ({'name': name , 'all_review_count': allreviewcount, 'country_rank': sorted_country, 'genre_rank': sorted_genre}, status=200)
+
+
+class ProfileView(View):
+    @login_decorator
+    def get(self,request):
+
+        user_id = request.user.id
+
+        user_name = User.objects.get(pk = user_id).name
+        user_rating = StarRating.objects.filter(user_id = user_id).count()
+
+        return JsonResponse({'NAME' : user_name, 'COUNT' : user_rating}, status = 200)         
 
 
