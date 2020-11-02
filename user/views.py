@@ -7,7 +7,9 @@ import itertools
 from django.http import JsonResponse
 from django.views import View
 from user.models import User
+from review.models import StarRating
 from my_settings import SECRET_KEY,ALGORITHM
+from user.utils import login_decorator
 
 from user.utils import login_decorator
 from movie.models import Movies, MoviePhotos, MovieVideos, Cast, People, Genres, MovieGenres, Tags, MovieTags, Services, MovieServices
@@ -66,6 +68,7 @@ class LoginView(View):
 
         except KeyError:
             return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status=400)
+
 
 
 class StatusSelectorView(View):
@@ -130,5 +133,3 @@ class ProfileView(View):
         user_rating = StarRating.objects.filter(user_id = user_id).count()
 
         return JsonResponse({'NAME' : user_name, 'COUNT' : user_rating}, status = 200)         
-
-
